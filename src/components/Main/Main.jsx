@@ -9,6 +9,7 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
   const [cards, setCards] = useState(null);
 
   useEffect(() => {
+    //запрос данных юзера
     api
       .request({ path: '/users/me' })
       .then(({ name, about, avatar }) => {
@@ -17,6 +18,7 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
         setUserAvatar(avatar);
       })
       .catch(api.catch);
+    //запрос карточек
     api.request({ path: '/cards' }).then(setCards).catch(api.catch);
   }, []);
 

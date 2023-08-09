@@ -1,4 +1,4 @@
-export default function Card({ name, link, likes, onCardClick, gg }) {
+export default function Card({ name, link, likes, onCardClick }) {
   function handleClick() {
     onCardClick(name, link);
   }

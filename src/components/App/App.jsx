@@ -25,9 +25,6 @@ export default function App() {
   function handleAddPlaceClick() {
     setPopup({ ...popup, card: true });
   }
-  function gg() {
-    setPopup({ ...popup, confirmation: true });
-  }
   //закрываем попапы
   function closeAllPopups() {
     setPopup({
@@ -49,9 +46,9 @@ export default function App() {
       document.removeEventListener('keydown', escClose);
     };
   }, [isOpen]);
-  //состояние попапа с картинкой
+
   const [image, setImage] = useState(null);
-  //передаем данные карточки в попап с картинкой
+  //открываем и передаем данные карточки в попап с картинкой
   function handleCardClick(name, link) {
     setPopup({ ...popup, image: true });
     setImage({ ...image, name: name, link: link });
