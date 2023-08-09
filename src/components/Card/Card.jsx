@@ -13,7 +13,7 @@ export default function Card({ name, link, likes, onCardClick, gg }) {
           <span className="card__counter">{likes.lenght}</span>
         </div>
       </div>
-      <button aria-label="удалить" type="button" className="card__delete" onClick={gg} />
+      <button aria-label="удалить" type="button" className="card__delete" />
     </article>
   );
 }

@@ -66,7 +66,6 @@ export default function App() {
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           onCardClick={handleCardClick}
-          gg={gg}
         />
         <Footer />
 

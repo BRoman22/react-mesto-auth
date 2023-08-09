@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../../utils/Api';
 import Card from '../Card/Card';
 
-export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, gg }) {
+export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
   const [userName, setUserName] = useState(null);
   const [userDescription, setUserDescription] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
@@ -50,7 +50,7 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
       <section aria-label="карточки" className="cards">
         <div className="cards__list">
           {cards?.map((data) => (
-            <Card key={data._id} {...data} onCardClick={onCardClick} gg={gg} />
+            <Card key={data._id} {...data} onCardClick={onCardClick} />
           ))}
         </div>
       </section>
