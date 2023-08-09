@@ -10,12 +10,7 @@ export default function ImagePopup({ isOpen, onClose, name, link }) {
       >
         <img src={link} alt={name} className="popup__image" />
         <h2 className="popup__title popup__title_picture">{name}</h2>
-        <button
-          aria-label="закрыть"
-          type="button"
-          className="popup__close"
-          onClick={onClose}
-        ></button>
+        <button aria-label="закрыть" type="button" className="popup__close" onClick={onClose} />
       </div>
     </div>
   );

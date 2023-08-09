@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../../utils/Api';
 import Card from '../Card/Card';
 
-export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
+export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, gg }) {
   const [userName, setUserName] = useState(null);
   const [userDescription, setUserDescription] = useState(null);
   const [userAvatar, setUserAvatar] = useState(null);
@@ -11,19 +11,13 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
   useEffect(() => {
     api
       .request({ path: '/users/me' })
-      .then((res) => {
-        setUserName(res.name);
-        setUserDescription(res.about);
-        setUserAvatar(res.avatar);
+      .then(({ name, about, avatar }) => {
+        setUserName(name);
+        setUserDescription(about);
+        setUserAvatar(avatar);
       })
       .catch(api.catch);
-    api
-      .request({ path: '/cards' })
-      .then((res) => {
-        const newCards = res;
-        setCards(newCards);
-      })
-      .catch(api.catch);
+    api.request({ path: '/cards' }).then(setCards).catch(api.catch);
   }, []);
 
   return (
@@ -35,7 +29,7 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
           type="button"
           className="profile__button-edit-avatar"
           onClick={onEditAvatar}
-        ></button>
+        />
         <div className="profile__info">
           <h1 className="profile__title">{userName}</h1>
           <button
@@ -43,7 +37,7 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
             type="button"
             className="profile__button-edit"
             onClick={onEditProfile}
-          ></button>
+          />
           <p className="profile__subtitle">{userDescription}</p>
         </div>
         <button
@@ -51,12 +45,12 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
           type="button"
           className="profile__button-add"
           onClick={onAddPlace}
-        ></button>
+        />
       </section>
       <section aria-label="карточки" className="cards">
         <div className="cards__list">
           {cards?.map((data) => (
-            <Card key={data._id} {...data} onCardClick={onCardClick} />
+            <Card key={data._id} {...data} onCardClick={onCardClick} gg={gg} />
           ))}
         </div>
       </section>

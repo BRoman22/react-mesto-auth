@@ -1,4 +1,4 @@
-export default function Card({ name, link, likes, onCardClick }) {
+export default function Card({ name, link, likes, onCardClick, gg }) {
   function handleClick() {
     onCardClick(name, link);
   }
@@ -9,11 +9,11 @@ export default function Card({ name, link, likes, onCardClick }) {
       <div className="card__wrapper">
         <h2 className="card__title">{name}</h2>
         <div className="card__wrap">
-          <button aria-label="нравится" type="button" className="card__like"></button>
+          <button aria-label="нравится" type="button" className="card__like" />
           <span className="card__counter">{likes.lenght}</span>
         </div>
       </div>
-      <button aria-label="удалить" type="button" className="card__delete"></button>
+      <button aria-label="удалить" type="button" className="card__delete" onClick={gg} />
     </article>
   );
 }
