@@ -28,14 +28,14 @@ class Api {
     return fetch(this._request('cards'), this._options()).then(this._checkResponse);
   }
 
-  like(cardData) {
+  setLike(cardData) {
     return fetch(
       this._request(`cards/${cardData._id}/likes`),
       this._options({ method: 'PUT' })
     ).then(this._checkResponse);
   }
 
-  dislike(cardData) {
+  setDislike(cardData) {
     return fetch(
       this._request(`cards/${cardData._id}/likes`),
       this._options({ method: 'DELETE' })

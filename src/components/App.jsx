@@ -45,11 +45,11 @@ export default function App() {
     return () => document.removeEventListener('keydown', escClose);
   }, [isOpen]);
 
-  const [image, setImage] = useState(null);
+  const [imagePopup, setImagePopup] = useState(null);
   //открываем и передаем данные карточки в попап с картинкой
   function handleCardClick(name, link) {
     setPopup({ ...popup, image: true });
-    setImage({ ...image, name: name, link: link });
+    setImagePopup({ ...imagePopup, name: name, link: link });
   }
 
   return (
@@ -139,7 +139,7 @@ export default function App() {
           onClose={closeAllPopups}
         />
 
-        <ImagePopup isOpen={popup.image} onClose={closeAllPopups} imageData={image} />
+        <ImagePopup isOpen={popup.image} onClose={closeAllPopups} imageData={imagePopup} />
       </div>
     </div>
   );
