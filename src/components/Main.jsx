@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../utils/Api';
-import Card from '../Card/Card';
+import { api } from '../utils/Api';
+import Card from './Card';
 
 export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
   const [userName, setUserName] = useState(null);
@@ -9,17 +9,15 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
   const [cards, setCards] = useState(null);
 
   useEffect(() => {
-    //запрос данных юзера
     api
-      .request({ path: '/users/me' })
+      .getUserInfo()
       .then(({ name, about, avatar }) => {
         setUserName(name);
         setUserDescription(about);
         setUserAvatar(avatar);
       })
       .catch(api.catch);
-    //запрос карточек
-    api.request({ path: '/cards' }).then(setCards).catch(api.catch);
+    api.getInitialCards().then(setCards).catch(api.catch);
   }, []);
 
   return (
@@ -52,7 +50,7 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
       <section aria-label="карточки" className="cards">
         <div className="cards__list">
           {cards?.map((data) => (
-            <Card key={data._id} {...data} onCardClick={onCardClick} />
+            <Card key={data._id} cardData={data} onCardClick={onCardClick} />
           ))}
         </div>
       </section>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import '../../index.css';
-import Header from '../Header/Header';
-import Main from '../Main/Main';
-import Footer from '../Footer/Footer';
-import PopupWithForm from '../PopupWithForm/PopupWithForm';
-import ImagePopup from '../ImagePopup/ImagePopup';
+import '../index.css';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import PopupWithForm from './PopupWithForm';
+import ImagePopup from './ImagePopup';
 
 export default function App() {
   //Состояние попапов
@@ -42,9 +42,7 @@ export default function App() {
       e.key === 'Escape' ? closeAllPopups() : null;
     }
     isOpen ? document.addEventListener('keydown', escClose) : null;
-    return () => {
-      document.removeEventListener('keydown', escClose);
-    };
+    return () => document.removeEventListener('keydown', escClose);
   }, [isOpen]);
 
   const [image, setImage] = useState(null);
@@ -79,7 +77,6 @@ export default function App() {
             type="text"
             className="popup__input popup__input_name"
             id="profile-name-input"
-            required
           />
           <span className="popup__error profile-name-input-error" />
           <input
@@ -88,7 +85,6 @@ export default function App() {
             type="text"
             className="popup__input popup__input_about"
             id="about-input"
-            required
           />
           <span className="popup__error about-input-error" />
         </PopupWithForm>
@@ -106,7 +102,6 @@ export default function App() {
             type="text"
             className="popup__input popup__input_name"
             id="card-name-input"
-            required
           />
           <span className="popup__error card-name-input-error" />
           <input
@@ -115,7 +110,6 @@ export default function App() {
             type="url"
             className="popup__input popup__input_link"
             id="link-input"
-            required
           />
           <span className="popup__error link-input-error" />
         </PopupWithForm>
@@ -133,7 +127,6 @@ export default function App() {
             type="url"
             className="popup__input popup__input_link"
             id="avatar-input"
-            required
           />
           <span className="popup__error avatar-input-error" />
         </PopupWithForm>
@@ -146,7 +139,7 @@ export default function App() {
           onClose={closeAllPopups}
         />
 
-        <ImagePopup isOpen={popup.image} onClose={closeAllPopups} {...image} />
+        <ImagePopup isOpen={popup.image} onClose={closeAllPopups} imageData={image} />
       </div>
     </div>
   );
