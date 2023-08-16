@@ -1,19 +1,45 @@
-export default function Card({ cardData, onCardClick }) {
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { useContext } from 'react';
+
+export default function Card({ card, onCardClick, onCardLike, onCardDelete }) {
+  const currentUser = useContext(CurrentUserContext);
+  const isOwn = card.owner._id === currentUser._id;
+  const isLiked = card.likes.some((i) => i._id === currentUser._id);
+  const cardLikeButtonClassName = `card__like ${isLiked && 'card__like_active'}`;
+
   function handleClick() {
-    onCardClick(cardData.name, cardData.link);
+    onCardClick(card.name, card.link);
+  }
+  function handleToggleLike() {
+    onCardLike(card);
+  }
+  function handleDeleteCard() {
+    onCardDelete(card._id);
   }
 
   return (
     <article className="card">
-      <img src={cardData.link} alt={cardData.name} className="card__image" onClick={handleClick} />
+      <img src={card.link} alt={card.name} className="card__image" onClick={handleClick} />
       <div className="card__wrapper">
-        <h2 className="card__title">{cardData.name}</h2>
+        <h2 className="card__title">{card.name}</h2>
         <div className="card__wrap">
-          <button aria-label="нравится" type="button" className="card__like" />
-          <span className="card__counter">{cardData.likes.lenght}</span>
+          <button
+            aria-label="нравится"
+            type="button"
+            className={cardLikeButtonClassName}
+            onClick={handleToggleLike}
+          />
+          <span className="card__counter">{card.likes.length}</span>
         </div>
       </div>
-      <button aria-label="удалить" type="button" className="card__delete" />
+      {isOwn && (
+        <button
+          aria-label="удалить"
+          type="button"
+          className="card__delete"
+          onClick={handleDeleteCard}
+        />
+      )}
     </article>
   );
 }

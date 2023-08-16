@@ -1,29 +1,22 @@
-import { useEffect, useState } from 'react';
-import { api } from '../utils/Api';
+import { useContext } from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
 
-export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
-  const [userName, setUserName] = useState(null);
-  const [userDescription, setUserDescription] = useState(null);
-  const [userAvatar, setUserAvatar] = useState(null);
-  const [cards, setCards] = useState(null);
-
-  useEffect(() => {
-    api
-      .getUserInfo()
-      .then(({ name, about, avatar }) => {
-        setUserName(name);
-        setUserDescription(about);
-        setUserAvatar(avatar);
-      })
-      .catch(api.catch);
-    api.getInitialCards().then(setCards).catch(api.catch);
-  }, []);
+export default function Main({
+  onEditProfile,
+  onAddPlace,
+  onEditAvatar,
+  onCardClick,
+  onCardLike,
+  onCardDelete,
+  cards,
+}) {
+  const currentUser = useContext(CurrentUserContext);
 
   return (
     <main className="main">
       <section className="profile">
-        <img src={userAvatar} alt={userName} className="profile__avatar" />
+        <img src={currentUser.avatar} alt={currentUser.name} className="profile__avatar" />
         <button
           aria-label="редактировать"
           type="button"
@@ -31,14 +24,14 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
           onClick={onEditAvatar}
         />
         <div className="profile__info">
-          <h1 className="profile__title">{userName}</h1>
+          <h1 className="profile__title">{currentUser.name}</h1>
           <button
             aria-label="редактировать"
             type="button"
             className="profile__button-edit"
             onClick={onEditProfile}
           />
-          <p className="profile__subtitle">{userDescription}</p>
+          <p className="profile__subtitle">{currentUser.about}</p>
         </div>
         <button
           aria-label="добавить карточку"
@@ -49,8 +42,14 @@ export default function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardCl
       </section>
       <section aria-label="карточки" className="cards">
         <div className="cards__list">
-          {cards?.map((data) => (
-            <Card key={data._id} cardData={data} onCardClick={onCardClick} />
+          {cards?.map((card) => (
+            <Card
+              key={card._id}
+              card={card}
+              onCardClick={onCardClick}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
+            />
           ))}
         </div>
       </section>

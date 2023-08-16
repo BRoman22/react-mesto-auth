@@ -1,14 +1,22 @@
-export default function PopupWithForm({ title, name, buttonText, isOpen, onClose, children }) {
+export default function PopupWithForm({
+  name,
+  title,
+  buttonText,
+  isOpen,
+  onClose,
+  onSubmit,
+  isDisable,
+  children,
+}) {
+  const popupClassName = `popup popup_${name} ${isOpen && 'popup_opened'}`;
+  const submitButtonClassName = `popup__button ${isDisable && 'popup__button_disabled'}`;
   return (
-    <div
-      className={isOpen ? `popup popup_${name} popup_opened` : `popup popup_${name}`}
-      onClick={onClose}
-    >
+    <div className={popupClassName} onClick={onClose}>
       <div className="popup__container" onClick={(e) => e.stopPropagation()}>
-        <form name={name} className={`popup__form popup__form_${name}`}>
+        <form name={name} className={`popup__form popup__form_${name}`} onSubmit={onSubmit}>
           <h2 className="popup__title">{title}</h2>
           {children}
-          <button type="submit" className="popup__button">
+          <button type="submit" className={submitButtonClassName} disabled={isDisable}>
             {buttonText}
           </button>
         </form>

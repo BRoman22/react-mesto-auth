@@ -4,12 +4,7 @@ class Api {
     this._url = url;
     this._token = token;
   }
-
-  _request(path) {
-    return `${this._url}/v1/cohort-71/${path}`;
-  }
-
-  _options(method = 'GET', data) {
+  _options(method, data) {
     return {
       method: method,
       headers: {
@@ -21,49 +16,36 @@ class Api {
   }
 
   getUserInfo() {
-    return fetch(this._request('users/me'), this._options()).then(this._checkResponse);
-  }
-
-  getInitialCards() {
-    return fetch(this._request('cards'), this._options()).then(this._checkResponse);
-  }
-
-  setLike(cardData) {
-    return fetch(
-      this._request(`cards/${cardData._id}/likes`),
-      this._options({ method: 'PUT' })
-    ).then(this._checkResponse);
-  }
-
-  setDislike(cardData) {
-    return fetch(
-      this._request(`cards/${cardData._id}/likes`),
-      this._options({ method: 'DELETE' })
-    ).then(this._checkResponse);
+    return fetch(`${this._url}/users/me`, this._options()).then(this._checkResponse);
   }
 
   setUserInfo(data) {
-    return fetch(this._request('users/me'), this._options({ method: 'PATCH', data })).then(
-      this._checkResponse
-    );
-  }
-
-  setNewCard(data) {
-    return fetch(this._request('cards'), this._options({ method: 'POST', data })).then(
-      this._checkResponse
-    );
-  }
-
-  deleteCard(id) {
-    return fetch(this._request(`cards/${id}`), this._options({ method: 'DELETE' })).then(
-      this._checkResponse
-    );
+    return fetch(`${this._url}/users/me`, this._options('PATCH', data)).then(this._checkResponse);
   }
 
   setAvatar(data) {
-    return fetch(this._request('users/me/avatar'), this._options({ method: 'PATCH', data })).then(
+    return fetch(`${this._url}/users/me/avatar`, this._options('PATCH', data)).then(
       this._checkResponse
     );
+  }
+
+  getCardList() {
+    return fetch(`${this._url}/cards`, this._options()).then(this._checkResponse);
+  }
+
+  toggleLike(card, isLiked) {
+    return fetch(
+      `${this._url}/cards/${card}/likes`,
+      this._options(isLiked ? 'DELETE' : 'PUT')
+    ).then(this._checkResponse);
+  }
+
+  addNewCard(data) {
+    return fetch(`${this._url}/cards`, this._options('POST', data)).then(this._checkResponse);
+  }
+
+  deleteCard(id) {
+    return fetch(`${this._url}/cards/${id}`, this._options('DELETE')).then(this._checkResponse);
   }
 
   _checkResponse(res) {
@@ -79,4 +61,4 @@ class Api {
   }
 }
 
-export const api = new Api('https://nomoreparties.co', myToken);
+export const api = new Api('https://nomoreparties.co/v1/cohort-71', myToken);
