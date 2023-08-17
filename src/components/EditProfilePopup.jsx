@@ -4,53 +4,42 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, buttonText }) {
   const inputName = useRef();
-  const inputDescription = useRef();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [nameError, setNameError] = useState();
-  const [descriptionError, setDescriptionError] = useState();
+  const inputAbout = useRef();
+  const [error, setError] = useState({ name: '', about: '' });
   const [resetSubmitButton, setResetSubmitButton] = useState(true);
   const currentUser = useContext(CurrentUserContext);
   const errorClassName = `popup__error ${resetSubmitButton && 'popup__error_active'}`;
 
   useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
+    inputName.current.value = currentUser.name;
+    inputAbout.current.value = currentUser.about;
   }, [currentUser]);
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdateUser({ name, about: description });
+    onUpdateUser({ name: inputName.current.value, about: inputAbout.current.value });
   }
   function closePopup() {
     onClose();
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-    setNameError('');
-    setDescriptionError('');
+    inputName.current.value = currentUser.name;
+    inputAbout.current.value = currentUser.about;
+    setError({ name: '', about: '' });
   }
   //валидация
-  function changeNameInput(e) {
-    setName(e.target.value);
-    e.target.checkValidity() && inputDescription.current.checkValidity()
-      ? setResetSubmitButton(false)
-      : setResetSubmitButton(true);
-    setNameError(e.target.validationMessage);
+  function getNameError() {
+    setError({ ...error, name: inputName.current.validationMessage });
+    validation();
   }
-  function changeDescriptionInput(e) {
-    setDescription(e.target.value);
-    e.target.checkValidity() && inputName.current.checkValidity()
+  function getAboutError() {
+    setError({ ...error, about: inputAbout.current.validationMessage });
+    validation();
+  }
+  function validation() {
+    inputName.current.checkValidity() && inputAbout.current.checkValidity()
       ? setResetSubmitButton(false)
       : setResetSubmitButton(true);
-    setDescriptionError(e.target.validationMessage);
   }
   useEffect(() => {
-    if (isOpen) {
-      inputName.current.checkValidity() && inputDescription.current.checkValidity()
-        ? setResetSubmitButton(false)
-        : setResetSubmitButton(true);
-    } else {
-      setResetSubmitButton(false);
-    }
+    isOpen ? validation() : setResetSubmitButton(false);
   }, [isOpen]);
 
   return (
@@ -70,11 +59,10 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
         minLength={2}
         maxLength={40}
         required
-        value={name}
-        onChange={changeNameInput}
+        onChange={getNameError}
         ref={inputName}
       />
-      <span className={errorClassName}>{nameError}</span>
+      <span className={errorClassName}>{error.name}</span>
       <input
         placeholder="О себе"
         type="text"
@@ -82,11 +70,10 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
         minLength={2}
         maxLength={200}
         required
-        value={description}
-        onChange={changeDescriptionInput}
-        ref={inputDescription}
+        onChange={getAboutError}
+        ref={inputAbout}
       />
-      <span className={errorClassName}>{descriptionError}</span>
+      <span className={errorClassName}>{error.about}</span>
     </PopupWithForm>
   );
 }

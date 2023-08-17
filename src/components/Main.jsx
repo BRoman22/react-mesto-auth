@@ -12,7 +12,6 @@ export default function Main({
   cards,
 }) {
   const currentUser = useContext(CurrentUserContext);
-
   return (
     <main className="main">
       <section className="profile">

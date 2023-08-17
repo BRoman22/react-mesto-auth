@@ -2,31 +2,30 @@ import { useRef, useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
 
 export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, buttonText }) {
-  const inputValue = useRef();
-  const [linkError, setLinkError] = useState();
+  const input = useRef();
+  const [error, setError] = useState();
   const [resetSubmitButton, setResetSubmitButton] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdateAvatar({ avatar: inputValue.current.value });
-    inputValue.current.value = '';
+    onUpdateAvatar({ avatar: input.current.value });
+    input.current.value = '';
   }
   function closePopup() {
     onClose();
-    inputValue.current.value = '';
-    setLinkError('');
+    input.current.value = '';
+    setError('');
   }
   //валидация
-  function changeLinkInput(e) {
-    e.target.checkValidity() ? setResetSubmitButton(false) : setResetSubmitButton(true);
-    setLinkError(e.target.validationMessage);
+  function getLinkError() {
+    setError(input.current.validationMessage);
+    validation();
+  }
+  function validation() {
+    input.current.checkValidity() ? setResetSubmitButton(false) : setResetSubmitButton(true);
   }
   useEffect(() => {
-    if (isOpen) {
-      inputValue.current.checkValidity() ? setResetSubmitButton(false) : setResetSubmitButton(true);
-    } else {
-      setResetSubmitButton(false);
-    }
+    isOpen ? validation() : setResetSubmitButton(false);
   }, [isOpen]);
 
   return (
@@ -44,12 +43,10 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
         type="url"
         className="popup__input"
         required
-        onChange={changeLinkInput}
-        ref={inputValue}
+        onChange={getLinkError}
+        ref={input}
       />
-      <span className={`popup__error ${resetSubmitButton && 'popup__error_active'}`}>
-        {linkError}
-      </span>
+      <span className={`popup__error ${resetSubmitButton && 'popup__error_active'}`}>{error}</span>
     </PopupWithForm>
   );
 }

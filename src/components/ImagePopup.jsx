@@ -1,9 +1,6 @@
 export default function ImagePopup({ isOpen, onClose, imageData }) {
   return (
-    <div
-      className={isOpen ? 'popup popup_picture popup_opened' : 'popup popup_picture'}
-      onClick={onClose}
-    >
+    <div className={`popup popup_picture ${isOpen && 'popup_opened'}`} onClick={onClose}>
       <div
         className="popup__container popup__container_picture"
         onClick={(e) => e.stopPropagation()}

@@ -94,6 +94,11 @@ export default function App() {
     setPopup({ ...popup, confirmation: true });
     setCardId(id);
   }
+  const [imageLink, setImageLink] = useState(null);
+  function handleCardClick(name, link) {
+    setPopup({ ...popup, image: true });
+    setImageLink({ name: name, link: link });
+  }
 
   function closeAllPopups() {
     setPopup({
@@ -113,11 +118,6 @@ export default function App() {
     return () => document.removeEventListener('keydown', escClose);
   }, [isOpen]);
 
-  const [imageLink, setImageLink] = useState(null);
-  function handleCardClick(name, link) {
-    setPopup({ ...popup, image: true });
-    setImageLink({ name: name, link: link });
-  }
   function handleToggleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     api
