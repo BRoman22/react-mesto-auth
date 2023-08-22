@@ -13,6 +13,7 @@ export default function DeleteCardPopup({ isOpen, onClose, onDeleteCard, buttonT
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
+      isValid={true}
     />
   );
 }

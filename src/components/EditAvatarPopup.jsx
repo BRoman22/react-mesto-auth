@@ -1,32 +1,21 @@
-import { useRef, useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
+import useFormValidation from '../hooks/useFormValidation';
 
 export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, buttonText }) {
-  const input = useRef();
-  const [error, setError] = useState();
-  const [resetSubmitButton, setResetSubmitButton] = useState(false);
+  const { inputs, errors, isValid, handleChange, resetAllForm, resetSubmitButton } =
+    useFormValidation();
+  const errorClassName = `popup__error ${errors.avatar && 'popup__error_active'}`;
+
+  useEffect(() => {
+    resetAllForm();
+    resetSubmitButton();
+  }, [isOpen]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdateAvatar({ avatar: input.current.value });
-    input.current.value = '';
+    onUpdateAvatar({ avatar: inputs.avatar });
   }
-  function closePopup() {
-    onClose();
-    input.current.value = '';
-    setError('');
-  }
-  //валидация
-  function getLinkError() {
-    setError(input.current.validationMessage);
-    validation();
-  }
-  function validation() {
-    input.current.checkValidity() ? setResetSubmitButton(false) : setResetSubmitButton(true);
-  }
-  useEffect(() => {
-    isOpen ? validation() : setResetSubmitButton(false);
-  }, [isOpen]);
 
   return (
     <PopupWithForm
@@ -34,19 +23,19 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
       title={'Обновить аватар'}
       buttonText={buttonText}
       isOpen={isOpen}
-      onClose={closePopup}
+      onClose={onClose}
       onSubmit={handleSubmit}
-      isDisable={resetSubmitButton}
+      isValid={isValid}
     >
       <input
         placeholder="Ссылка на картинку"
         type="url"
         className="popup__input"
         required
-        onChange={getLinkError}
-        ref={input}
+        value={inputs.avatar}
+        onChange={(e) => handleChange('avatar', e)}
       />
-      <span className={`popup__error ${resetSubmitButton && 'popup__error_active'}`}>{error}</span>
+      <span className={errorClassName}>{errors.avatar}</span>
     </PopupWithForm>
   );
 }

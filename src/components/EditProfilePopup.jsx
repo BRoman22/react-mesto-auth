@@ -1,46 +1,22 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext } from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import useFormValidation from '../hooks/useFormValidation';
 
 export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, buttonText }) {
-  const inputName = useRef();
-  const inputAbout = useRef();
-  const [error, setError] = useState({ name: '', about: '' });
-  const [resetSubmitButton, setResetSubmitButton] = useState(true);
+  const { inputs, setInputs, errors, isValid, handleChange, resetAllForm } = useFormValidation();
   const currentUser = useContext(CurrentUserContext);
-  const errorClassName = `popup__error ${resetSubmitButton && 'popup__error_active'}`;
+  const errorClassName = `popup__error ${(errors.name || errors.about) && 'popup__error_active'}`;
 
   useEffect(() => {
-    inputName.current.value = currentUser.name;
-    inputAbout.current.value = currentUser.about;
-  }, [currentUser]);
+    resetAllForm();
+    setInputs({ ...inputs, name: currentUser.name, about: currentUser.about });
+  }, [currentUser, isOpen]);
+
   function handleSubmit(e) {
     e.preventDefault();
-    onUpdateUser({ name: inputName.current.value, about: inputAbout.current.value });
+    onUpdateUser({ name: inputs.name, about: inputs.about });
   }
-  function closePopup() {
-    onClose();
-    inputName.current.value = currentUser.name;
-    inputAbout.current.value = currentUser.about;
-    setError({ name: '', about: '' });
-  }
-  //валидация
-  function getNameError() {
-    setError({ ...error, name: inputName.current.validationMessage });
-    validation();
-  }
-  function getAboutError() {
-    setError({ ...error, about: inputAbout.current.validationMessage });
-    validation();
-  }
-  function validation() {
-    inputName.current.checkValidity() && inputAbout.current.checkValidity()
-      ? setResetSubmitButton(false)
-      : setResetSubmitButton(true);
-  }
-  useEffect(() => {
-    isOpen ? validation() : setResetSubmitButton(false);
-  }, [isOpen]);
 
   return (
     <PopupWithForm
@@ -48,9 +24,9 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
       title={'Редактировать профиль'}
       buttonText={buttonText}
       isOpen={isOpen}
-      onClose={closePopup}
+      onClose={onClose}
       onSubmit={handleSubmit}
-      isDisable={resetSubmitButton}
+      isValid={isValid}
     >
       <input
         placeholder="Введите имя"
@@ -59,10 +35,10 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
         minLength={2}
         maxLength={40}
         required
-        onChange={getNameError}
-        ref={inputName}
+        value={inputs.name}
+        onChange={(e) => handleChange('name', e)}
       />
-      <span className={errorClassName}>{error.name}</span>
+      <span className={errorClassName}>{errors.name}</span>
       <input
         placeholder="О себе"
         type="text"
@@ -70,10 +46,10 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
         minLength={2}
         maxLength={200}
         required
-        onChange={getAboutError}
-        ref={inputAbout}
+        value={inputs.about}
+        onChange={(e) => handleChange('about', e)}
       />
-      <span className={errorClassName}>{error.about}</span>
+      <span className={errorClassName}>{errors.about}</span>
     </PopupWithForm>
   );
 }

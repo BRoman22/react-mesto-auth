@@ -1,8 +1,8 @@
-import { useContext } from 'react';
+import { memo, useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
 
-export default function Main({
+function FMain({
   onEditProfile,
   onAddPlace,
   onEditAvatar,
@@ -55,3 +55,5 @@ export default function Main({
     </main>
   );
 }
+
+export const Main = memo(FMain);

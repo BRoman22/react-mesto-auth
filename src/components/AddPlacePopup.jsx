@@ -1,42 +1,21 @@
-import { useEffect, useRef, useState, memo } from 'react';
+import { useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
+import useFormValidation from '../hooks/useFormValidation';
 
 export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText }) {
-  const inputName = useRef();
-  const inputLink = useRef();
-  const [error, setError] = useState({ name: '', link: '' });
-  const [resetSubmitButton, setResetSubmitButton] = useState(false);
-  const errorClassName = `popup__error ${resetSubmitButton && 'popup__error_active'}`;
+  const { inputs, errors, isValid, handleChange, resetAllForm, resetSubmitButton } =
+    useFormValidation();
+  const errorClassName = `popup__error ${(errors.place || errors.link) && 'popup__error_active'}`;
+
+  useEffect(() => {
+    resetAllForm();
+    resetSubmitButton();
+  }, [isOpen]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    onAddPlace({ name: inputName.current.value, link: inputLink.current.value });
-    inputName.current.value = '';
-    inputLink.current.value = '';
+    onAddPlace({ name: inputs.place, link: inputs.link });
   }
-  function closePopup() {
-    onClose();
-    inputName.current.value = '';
-    inputLink.current.value = '';
-    setError({ name: '', link: '' });
-  }
-  //валидация
-  function getNameError() {
-    setError({ ...error, name: inputName.current.validationMessage });
-    validation();
-  }
-  function getLinkError() {
-    setError({ ...error, link: inputLink.current.validationMessage });
-    validation();
-  }
-  function validation() {
-    inputName.current.checkValidity() && inputLink.current.checkValidity()
-      ? setResetSubmitButton(false)
-      : setResetSubmitButton(true);
-  }
-  useEffect(() => {
-    isOpen ? validation() : setResetSubmitButton(false);
-  }, [isOpen]);
 
   return (
     <PopupWithForm
@@ -44,9 +23,9 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
       title={'Новое место'}
       buttonText={buttonText}
       isOpen={isOpen}
-      onClose={closePopup}
+      onClose={onClose}
       onSubmit={handleSubmit}
-      isDisable={resetSubmitButton}
+      isValid={isValid}
     >
       <input
         placeholder="Название"
@@ -55,19 +34,19 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
         minLength={2}
         maxLength={30}
         required
-        onChange={getNameError}
-        ref={inputName}
+        value={inputs.place}
+        onChange={(e) => handleChange('place', e)}
       />
-      <span className={errorClassName}>{error.name}</span>
+      <span className={errorClassName}>{errors.place}</span>
       <input
         placeholder="Ссылка на картинку"
         type="url"
         className="popup__input"
         required
-        onChange={getLinkError}
-        ref={inputLink}
+        value={inputs.link}
+        onChange={(e) => handleChange('link', e)}
       />
-      <span className={errorClassName}>{error.link}</span>
+      <span className={errorClassName}>{errors.link}</span>
     </PopupWithForm>
   );
 }
