@@ -18,6 +18,7 @@ export default function App() {
     name: '',
     about: '',
     avatar: '',
+    _id: '',
   });
   const [cards, setCards] = useState(null);
   const {
@@ -92,8 +93,7 @@ export default function App() {
     handleSubmit(makeRequest, 'confirmation');
   }
 
-  const handleToggleCardLike = useCallback((card) => {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+  const handleToggleCardLike = useCallback((card, isLiked) => {
     toggleLike(card._id, isLiked)
       .then((newCard) => setCards((cards) => cards.map((c) => (c._id === card._id ? newCard : c))))
       .catch(getError);

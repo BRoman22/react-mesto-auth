@@ -1,20 +1,23 @@
 import { useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
-import useFormValidation from '../hooks/useFormValidation';
+import { useForm } from 'react-hook-form';
 
 export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, buttonText }) {
-  const { inputs, errors, isValid, handleChange, resetAllForm, resetSubmitButton } =
-    useFormValidation();
-  const errorClassName = `popup__error ${errors.avatar && 'popup__error_active'}`;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm({
+    mode: 'onChange',
+  });
 
   useEffect(() => {
-    resetAllForm();
-    resetSubmitButton();
+    reset();
   }, [isOpen]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    onUpdateAvatar({ avatar: inputs.avatar });
+  function onSubmit(data) {
+    onUpdateAvatar({ avatar: data.avatar });
   }
 
   return (
@@ -24,18 +27,22 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
       buttonText={buttonText}
       isOpen={isOpen}
       onClose={onClose}
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       isValid={isValid}
     >
       <input
         placeholder="Ссылка на картинку"
-        type="url"
         className="popup__input"
-        required
-        value={inputs.avatar}
-        onChange={(e) => handleChange('avatar', e)}
+        {...register('avatar', {
+          required: 'Заполните это поле.',
+          pattern: {
+            value:
+              /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+            message: 'Введите URL.',
+          },
+        })}
       />
-      <span className={errorClassName}>{errors.avatar}</span>
+      <span className="popup__error">{errors.avatar?.message}</span>
     </PopupWithForm>
   );
 }

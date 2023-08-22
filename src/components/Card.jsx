@@ -11,7 +11,7 @@ export default function Card({ card, onCardClick, onCardLike, onCardDelete }) {
     onCardClick(card.name, card.link);
   }
   function handleToggleLike() {
-    onCardLike(card);
+    onCardLike(card, isLiked);
   }
   function handleDeleteCard() {
     onCardDelete(card._id);

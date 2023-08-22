@@ -1,20 +1,23 @@
 import { useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
-import useFormValidation from '../hooks/useFormValidation';
+import { useForm } from 'react-hook-form';
 
 export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText }) {
-  const { inputs, errors, isValid, handleChange, resetAllForm, resetSubmitButton } =
-    useFormValidation();
-  const errorClassName = `popup__error ${(errors.place || errors.link) && 'popup__error_active'}`;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm({
+    mode: 'onChange',
+  });
 
   useEffect(() => {
-    resetAllForm();
-    resetSubmitButton();
+    reset();
   }, [isOpen]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    onAddPlace({ name: inputs.place, link: inputs.link });
+  function onSubmit(data) {
+    onAddPlace({ name: data.name, link: data.link });
   }
 
   return (
@@ -24,29 +27,32 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
       buttonText={buttonText}
       isOpen={isOpen}
       onClose={onClose}
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       isValid={isValid}
     >
       <input
         placeholder="Название"
-        type="text"
         className="popup__input"
-        minLength={2}
         maxLength={30}
-        required
-        value={inputs.place}
-        onChange={(e) => handleChange('place', e)}
+        {...register('name', {
+          required: 'Заполните это поле.',
+          minLength: { value: 2, message: 'Текст должен быть не короче 2 симв.' },
+        })}
       />
-      <span className={errorClassName}>{errors.place}</span>
+      <span className="popup__error">{errors.name?.message}</span>
       <input
         placeholder="Ссылка на картинку"
-        type="url"
         className="popup__input"
-        required
-        value={inputs.link}
-        onChange={(e) => handleChange('link', e)}
+        {...register('link', {
+          required: 'Заполните это поле.',
+          pattern: {
+            value:
+              /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+            message: 'Введите URL.',
+          },
+        })}
       />
-      <span className={errorClassName}>{errors.link}</span>
+      <span className="popup__error">{errors.link?.message}</span>
     </PopupWithForm>
   );
 }

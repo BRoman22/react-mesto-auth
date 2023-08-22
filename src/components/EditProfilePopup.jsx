@@ -1,21 +1,28 @@
 import { useEffect, useContext } from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import useFormValidation from '../hooks/useFormValidation';
+import { useForm } from 'react-hook-form';
 
 export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, buttonText }) {
-  const { inputs, setInputs, errors, isValid, handleChange, resetAllForm } = useFormValidation();
   const currentUser = useContext(CurrentUserContext);
-  const errorClassName = `popup__error ${(errors.name || errors.about) && 'popup__error_active'}`;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+    setValue,
+  } = useForm({
+    mode: 'onChange',
+  });
 
   useEffect(() => {
-    resetAllForm();
-    setInputs({ ...inputs, name: currentUser.name, about: currentUser.about });
-  }, [currentUser, isOpen]);
+    reset();
+    setValue('name', currentUser.name);
+    setValue('about', currentUser.about);
+  }, [isOpen, currentUser]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    onUpdateUser({ name: inputs.name, about: inputs.about });
+  function onSubmit(data) {
+    onUpdateUser({ name: data.name, about: data.about });
   }
 
   return (
@@ -25,31 +32,29 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
       buttonText={buttonText}
       isOpen={isOpen}
       onClose={onClose}
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       isValid={isValid}
     >
       <input
         placeholder="Введите имя"
-        type="text"
         className="popup__input"
-        minLength={2}
         maxLength={40}
-        required
-        value={inputs.name}
-        onChange={(e) => handleChange('name', e)}
+        {...register('name', {
+          required: 'Заполните это поле.',
+          minLength: { value: 2, message: 'Текст должен быть не короче 2 симв.' },
+        })}
       />
-      <span className={errorClassName}>{errors.name}</span>
+      <span className="popup__error">{errors.name?.message}</span>
       <input
         placeholder="О себе"
-        type="text"
         className="popup__input"
-        minLength={2}
         maxLength={200}
-        required
-        value={inputs.about}
-        onChange={(e) => handleChange('about', e)}
+        {...register('about', {
+          required: 'Заполните это поле.',
+          minLength: { value: 2, message: 'Текст должен быть не короче 2 симв.' },
+        })}
       />
-      <span className={errorClassName}>{errors.about}</span>
+      <span className="popup__error">{errors.about?.message}</span>
     </PopupWithForm>
   );
 }
