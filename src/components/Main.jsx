@@ -1,8 +1,8 @@
-import { memo, useContext } from 'react';
+import { useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
 
-function FMain({
+export default function Main({
   onEditProfile,
   onAddPlace,
   onEditAvatar,
@@ -15,7 +15,7 @@ function FMain({
   return (
     <main className="main">
       <section className="profile">
-        <img src={currentUser.avatar} alt={currentUser.name} className="profile__avatar" />
+        <img src={currentUser?.avatar} alt={currentUser?.name} className="profile__avatar" />
         <button
           aria-label="редактировать"
           type="button"
@@ -23,14 +23,14 @@ function FMain({
           onClick={onEditAvatar}
         />
         <div className="profile__info">
-          <h1 className="profile__title">{currentUser.name}</h1>
+          <h1 className="profile__title">{currentUser?.name}</h1>
           <button
             aria-label="редактировать"
             type="button"
             className="profile__button-edit"
             onClick={onEditProfile}
           />
-          <p className="profile__subtitle">{currentUser.about}</p>
+          <p className="profile__subtitle">{currentUser?.about}</p>
         </div>
         <button
           aria-label="добавить карточку"
@@ -55,5 +55,3 @@ function FMain({
     </main>
   );
 }
-
-export const Main = memo(FMain);

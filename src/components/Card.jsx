@@ -3,9 +3,8 @@ import { useContext } from 'react';
 
 export default function Card({ card, onCardClick, onCardLike, onCardDelete }) {
   const currentUser = useContext(CurrentUserContext);
-  const isOwn = card.owner._id === currentUser._id;
-  const isLiked = card.likes.some((i) => i._id === currentUser._id);
-  const cardLikeButtonClassName = `card__like ${isLiked && 'card__like_active'}`;
+  const isOwn = card.owner._id === currentUser?._id;
+  const isLiked = card.likes.some((i) => i._id === currentUser?._id);
 
   function handleClick() {
     onCardClick(card.name, card.link);
@@ -26,7 +25,7 @@ export default function Card({ card, onCardClick, onCardLike, onCardDelete }) {
           <button
             aria-label="нравится"
             type="button"
-            className={cardLikeButtonClassName}
+            className={`card__like ${isLiked && 'card__like_active'}`}
             onClick={handleToggleLike}
           />
           <span className="card__counter">{card.likes.length}</span>

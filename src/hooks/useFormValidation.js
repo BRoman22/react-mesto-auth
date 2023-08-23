@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-//cпасибо за помощь, хук работает, по совету наставников переписал на react hook form
+//не используется, пример кастомного хука валидации
 export default function useFormValidation() {
   const newValues = { name: '', about: '', place: '', link: '', avatar: '' };
   const [inputs, setInputs] = useState(newValues);

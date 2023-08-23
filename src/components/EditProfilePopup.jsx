@@ -11,14 +11,12 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
     formState: { errors, isValid },
     reset,
     setValue,
-  } = useForm({
-    mode: 'onChange',
-  });
+  } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
     reset();
-    setValue('name', currentUser.name);
-    setValue('about', currentUser.about);
+    setValue('name', currentUser?.name);
+    setValue('about', currentUser?.about);
   }, [isOpen, currentUser]);
 
   function onSubmit(data) {

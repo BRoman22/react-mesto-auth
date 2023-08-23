@@ -6,7 +6,7 @@ export function useApi(url, token) {
         authorization: token,
         'Content-Type': 'application/json',
       },
-      body: data ? JSON.stringify(data) : null,
+      body: data && JSON.stringify(data),
     }).then(checkResponse);
   };
 
