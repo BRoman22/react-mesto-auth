@@ -8,7 +8,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
     handleSubmit,
     formState: { errors, isValid },
     reset,
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', defaultValues: { name: '', link: '' } });
 
   useEffect(() => {
     reset();

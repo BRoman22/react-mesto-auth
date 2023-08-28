@@ -8,7 +8,7 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
     handleSubmit,
     formState: { errors, isValid },
     reset,
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', defaultValues: { avatar: '' } });
 
   useEffect(() => {
     reset();

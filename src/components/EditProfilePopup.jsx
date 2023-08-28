@@ -11,7 +11,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
     formState: { errors, isValid },
     reset,
     setValue,
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', defaultValues: { name: '', about: '' } });
 
   useEffect(() => {
     reset();

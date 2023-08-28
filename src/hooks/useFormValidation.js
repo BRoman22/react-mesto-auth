@@ -1,14 +1,15 @@
 import { useState } from 'react';
-//не используется, пример кастомного хука валидации
+//кастомный хук валидации
 export default function useFormValidation() {
-  const newValues = { name: '', about: '', place: '', link: '', avatar: '' };
+  const newValues = {};
   const [inputs, setInputs] = useState(newValues);
   const [errors, setErrors] = useState(newValues);
   const [isValid, setIsValid] = useState(true);
 
-  function handleChange(inputName, e) {
-    setInputs({ ...inputs, [inputName]: e.target.value });
-    setErrors({ ...errors, [inputName]: e.target.validationMessage });
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setInputs({ ...inputs, [name]: value });
+    setErrors({ ...errors, [name]: e.target.validationMessage });
     setIsValid(e.target.closest('form').checkValidity());
   }
 
