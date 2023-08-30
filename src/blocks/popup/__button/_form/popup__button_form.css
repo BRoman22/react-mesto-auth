@@ -1,0 +1,9 @@
+.popup__button_form {
+  margin-top: 186px;
+  background-color: #FFF;
+  color: #000;
+}
+
+.popup__button_form:hover {
+  opacity: .6;
+}

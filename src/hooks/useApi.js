@@ -1,4 +1,5 @@
-export function useApi(url, token) {
+export default function useApi(token) {
+  const url = 'https://nomoreparties.co/v1/cohort-71';
   const request = (path, method, data) => {
     return fetch(`${url}/${path}`, {
       method: method,

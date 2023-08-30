@@ -1,6 +1,6 @@
 import usePopupClose from '../hooks/usePopupClose';
 
-export default function FPopupWithForm({
+export default function PopupWithForm({
   name,
   title,
   buttonText,

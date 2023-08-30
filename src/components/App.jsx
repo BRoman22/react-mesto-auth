@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { CurrentCardContext } from '../contexts/CurrentCardContext';
 import '../index.css';
 import Header from './Header';
 import Main from './Main';
@@ -8,12 +11,20 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import DeleteCardPopup from './DeleteCardPopup';
 import ImagePopup from './ImagePopup';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import { CurrentCardContext } from '../contexts/CurrentCardContext';
-import { useApi } from '../hooks/useApi';
-import { myToken } from '../utils/myToken';
+import ProtectedRoute from './ProtectedRoute';
+import Login from './Login';
+import Register from './Register';
+import InfoTooltip from './InfoTooltip';
+import useApi from '../hooks/useApi';
+import myToken from '../utils/myToken';
 
 export default function App() {
+  const [loggedIn, setLoggedIn] = useState(true);
+  //
+  //
+  //
+  //
+  //
   const [currentUser, setCurrentUser] = useState(null);
   const [cards, setCards] = useState(null);
   const {
@@ -25,7 +36,7 @@ export default function App() {
     addNewCard,
     deleteCard,
     getError,
-  } = useApi('https://nomoreparties.co/v1/cohort-71', myToken);
+  } = useApi(myToken);
 
   useEffect(() => {
     getUserInfo().then(setCurrentUser).catch(getError);
@@ -97,6 +108,8 @@ export default function App() {
     avatar: false,
     confirmation: false,
     image: false,
+    toolTipSuccess: false,
+    toolTipFail: false,
   });
   function handleEditProfileClick() {
     setPopup({ ...popup, profile: true });
@@ -133,42 +146,86 @@ export default function App() {
       <CurrentCardContext.Provider value={cards}>
         <div className="page">
           <div className="page__content">
-            <Header />
-            <Main
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onEditAvatar={handleEditAvatarClick}
-              onCardClick={handleCardClick}
-              onCardLike={handleToggleCardLike}
-              onCardDelete={handleConfirmDeleteCardClick}
-              cards={cards}
-            />
-            <Footer />
-            <EditProfilePopup
-              isOpen={popup.profile}
-              onClose={closeAllPopups}
-              onUpdateUser={handleUpdateUser}
-              buttonText={buttonText.user}
-            />
-            <AddPlacePopup
-              isOpen={popup.card}
-              onClose={closeAllPopups}
-              onAddPlace={handleAddCard}
-              buttonText={buttonText.card}
-            />
-            <EditAvatarPopup
-              isOpen={popup.avatar}
-              onClose={closeAllPopups}
-              onUpdateAvatar={handleUpdateAvatar}
-              buttonText={buttonText.user}
-            />
-            <DeleteCardPopup
-              isOpen={popup.confirmation}
-              onClose={closeAllPopups}
-              onDeleteCard={handleCardDelete}
-              buttonText={buttonText.confirmation}
-            />
-            <ImagePopup isOpen={popup.image} onClose={closeAllPopups} card={cardData} />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute loggedIn={loggedIn}>
+                    <Header title={'Выйти'} link={'/signin'} email={'email@mail.com'} />
+                    <Main
+                      onEditProfile={handleEditProfileClick}
+                      onAddPlace={handleAddPlaceClick}
+                      onEditAvatar={handleEditAvatarClick}
+                      onCardClick={handleCardClick}
+                      onCardLike={handleToggleCardLike}
+                      onCardDelete={handleConfirmDeleteCardClick}
+                      cards={cards}
+                    />
+                    <Footer />
+                    <EditProfilePopup
+                      isOpen={popup.profile}
+                      onClose={closeAllPopups}
+                      onUpdateUser={handleUpdateUser}
+                      buttonText={buttonText.user}
+                    />
+                    <AddPlacePopup
+                      isOpen={popup.card}
+                      onClose={closeAllPopups}
+                      onAddPlace={handleAddCard}
+                      buttonText={buttonText.card}
+                    />
+                    <EditAvatarPopup
+                      isOpen={popup.avatar}
+                      onClose={closeAllPopups}
+                      onUpdateAvatar={handleUpdateAvatar}
+                      buttonText={buttonText.user}
+                    />
+                    <DeleteCardPopup
+                      isOpen={popup.confirmation}
+                      onClose={closeAllPopups}
+                      onDeleteCard={handleCardDelete}
+                      buttonText={buttonText.confirmation}
+                    />
+                    <ImagePopup isOpen={popup.image} onClose={closeAllPopups} card={cardData} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <>
+                    <Register />
+                    <InfoTooltip
+                      name={'success'}
+                      title={'Вы успешно зарегистрировались!'}
+                      isOpen={popup.toolTipSuccess}
+                      onClose={closeAllPopups}
+                    />
+                    <InfoTooltip
+                      name={'fail'}
+                      title={'Что-то пошло не так!Попробуйте ещё раз.'}
+                      isOpen={popup.toolTipFail}
+                      onClose={closeAllPopups}
+                    />
+                  </>
+                }
+              />
+              <Route
+                path="/signin"
+                element={
+                  <>
+                    <Login />
+                    <InfoTooltip
+                      name={'fail'}
+                      title={'Что-то пошло не так!Попробуйте ещё раз.'}
+                      isOpen={popup.toolTipFail}
+                      onClose={closeAllPopups}
+                    />
+                  </>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
           </div>
         </div>
       </CurrentCardContext.Provider>
