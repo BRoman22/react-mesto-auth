@@ -1,6 +1,6 @@
 {
-  "homepage": "https://broman22.github.io/mesto-react/",
-  "name": "mesto-react",
+  "homepage": "https://broman22.github.io/react-mesto-auth/",
+  "name": "react-mesto-auth",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -28,5 +28,9 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "gh-pages": "^5.0.0",
     "vite": "^4.4.5"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/BRoman22/react-mesto-auth.git",
+  "author": "Roman Bondarev <Rbondarev22@gmail.com>",
+  "license": "MIT"
 }

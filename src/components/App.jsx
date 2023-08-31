@@ -15,33 +15,59 @@ import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import Register from './Register';
 import InfoTooltip from './InfoTooltip';
-import useApi from '../hooks/useApi';
-import myToken from '../utils/myToken';
+import * as api from '../utils/api';
+import * as auth from '../utils/auth';
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState(true);
-  //
-  //
-  //
-  //
-  //
+  const [localStorageLoggedIn, setLocalStorageLoggedIn] = useState(
+    localStorage.getItem('isLogged')
+  );
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [cards, setCards] = useState(null);
-  const {
-    getUserInfo,
-    setUserInfo,
-    setAvatar,
-    getCardList,
-    toggleLike,
-    addNewCard,
-    deleteCard,
-    getError,
-  } = useApi(myToken);
 
   useEffect(() => {
-    getUserInfo().then(setCurrentUser).catch(getError);
-    getCardList().then(setCards).catch(getError);
-  }, []);
+    if (loggedIn) {
+      api.getUserInfo().then(setCurrentUser).catch(api.getError);
+      api.getCardList().then(setCards).catch(api.getError);
+    }
+    auth
+      .checkToken()
+      .then((res) => {
+        setEmail(res.data.email);
+        setLoggedIn(true);
+      })
+      .catch(() => {
+        localStorage.setItem('isLogged', false);
+        setLocalStorageLoggedIn(false);
+      });
+  }, [loggedIn]);
+
+  //auth
+  function handleRegister(email, password) {
+    auth
+      .register({ email, password })
+      .then(() => setPopup({ ...popup, toolTipSuccess: true }))
+      .catch(() => setPopup({ ...popup, toolTipFail: true }));
+  }
+
+  function handleLogin(email, password) {
+    auth
+      .login({ email, password })
+      .then((res) => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('isLogged', true);
+        setLoggedIn(true);
+        setLocalStorageLoggedIn(true);
+      })
+      .catch(() => setPopup({ ...popup, toolTipFail: true }));
+  }
+
+  function handleSignout() {
+    localStorage.clear();
+    setLoggedIn(false);
+  }
 
   //submits
   const [buttonText, setButtonText] = useState({
@@ -49,6 +75,7 @@ export default function App() {
     card: 'Создать',
     confirmation: 'Да',
   });
+
   const setIsLoading = (isLoading, buttonName) => {
     const text = buttonName != 'confirmation' ? 'Сохранение...' : 'Удаление...';
     const initialText = buttonText[buttonName];
@@ -56,40 +83,45 @@ export default function App() {
       ? setButtonText({ ...buttonText, [buttonName]: text })
       : setButtonText({ ...buttonText, [buttonName]: initialText });
   };
+
   function handleSubmit(makeRequest, buttonName) {
     setIsLoading(true, buttonName);
     makeRequest()
       .then(closeAllPopups())
-      .catch(getError)
+      .catch(api.getError)
       .finally(() => setIsLoading(false, buttonName));
   }
+
   function handleUpdateUser(data) {
     function makeRequest() {
-      return setUserInfo(data).then((res) => {
+      return api.setUserInfo(data).then((res) => {
         setCurrentUser({ ...currentUser, name: res.name, about: res.about });
       });
     }
     handleSubmit(makeRequest, 'user');
   }
+
   function handleUpdateAvatar(data) {
     function makeRequest() {
-      return setAvatar(data).then((res) => {
+      return api.setAvatar(data).then((res) => {
         setCurrentUser({ ...currentUser, avatar: res.avatar });
       });
     }
     handleSubmit(makeRequest, 'user');
   }
+
   function handleAddCard(data) {
     function makeRequest() {
-      return addNewCard(data).then((newCard) => {
+      return api.addNewCard(data).then((newCard) => {
         setCards([newCard, ...cards]);
       });
     }
     handleSubmit(makeRequest, 'card');
   }
+
   function handleCardDelete() {
     function makeRequest() {
-      return deleteCard(cardId).then(() => {
+      return api.deleteCard(cardId).then(() => {
         setCards((cards) => cards.filter((card) => card._id != cardId));
       });
     }
@@ -97,10 +129,12 @@ export default function App() {
   }
 
   function handleToggleCardLike(card, isLiked) {
-    toggleLike(card._id, isLiked)
+    api
+      .toggleLike(card._id, isLiked)
       .then((newCard) => setCards((cards) => cards.map((c) => (c._id === card._id ? newCard : c))))
-      .catch(getError);
+      .catch(api.getError);
   }
+
   //открытие/закрытие попапов
   const [popup, setPopup] = useState({
     profile: false,
@@ -138,6 +172,8 @@ export default function App() {
       avatar: false,
       confirmation: false,
       image: false,
+      toolTipSuccess: false,
+      toolTipFail: false,
     });
   }
 
@@ -151,7 +187,12 @@ export default function App() {
                 path="/"
                 element={
                   <ProtectedRoute loggedIn={loggedIn}>
-                    <Header title={'Выйти'} link={'/signin'} email={'email@mail.com'} />
+                    <Header
+                      title={'Выйти'}
+                      link={'/signin'}
+                      email={email}
+                      signout={handleSignout}
+                    />
                     <Main
                       onEditProfile={handleEditProfileClick}
                       onAddPlace={handleAddPlaceClick}
@@ -190,40 +231,44 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/signup"
-                element={
-                  <>
-                    <Register />
-                    <InfoTooltip
-                      name={'success'}
-                      title={'Вы успешно зарегистрировались!'}
-                      isOpen={popup.toolTipSuccess}
-                      onClose={closeAllPopups}
-                    />
-                    <InfoTooltip
-                      name={'fail'}
-                      title={'Что-то пошло не так!Попробуйте ещё раз.'}
-                      isOpen={popup.toolTipFail}
-                      onClose={closeAllPopups}
-                    />
-                  </>
-                }
-              />
-              <Route
-                path="/signin"
-                element={
-                  <>
-                    <Login />
-                    <InfoTooltip
-                      name={'fail'}
-                      title={'Что-то пошло не так!Попробуйте ещё раз.'}
-                      isOpen={popup.toolTipFail}
-                      onClose={closeAllPopups}
-                    />
-                  </>
-                }
-              />
+              {!localStorageLoggedIn && (
+                <Route
+                  path="/signup"
+                  element={
+                    <>
+                      <Register onRegister={handleRegister} />
+                      <InfoTooltip
+                        name={'success'}
+                        title={'Вы успешно зарегистрировались!'}
+                        isOpen={popup.toolTipSuccess}
+                        onClose={closeAllPopups}
+                      />
+                      <InfoTooltip
+                        name={'fail'}
+                        title={'Что-то пошло не так!Попробуйте ещё раз.'}
+                        isOpen={popup.toolTipFail}
+                        onClose={closeAllPopups}
+                      />
+                    </>
+                  }
+                />
+              )}
+              {!localStorageLoggedIn && (
+                <Route
+                  path="/signin"
+                  element={
+                    <>
+                      <Login onLogin={handleLogin} />
+                      <InfoTooltip
+                        name={'fail'}
+                        title={'Что-то пошло не так!Попробуйте ещё раз.'}
+                        isOpen={popup.toolTipFail}
+                        onClose={closeAllPopups}
+                      />
+                    </>
+                  }
+                />
+              )}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
