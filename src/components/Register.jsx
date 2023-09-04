@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from './Header';
 
 export default function Register({ onRegister }) {
   const [formValue, setFormValue] = useState({
@@ -24,7 +23,6 @@ export default function Register({ onRegister }) {
 
   return (
     <>
-      <Header title={'Войти'} link={'/signin'} />
       <form className="form" onSubmit={handleSubmit}>
         <h2 className="form__title">{'Регистрация'}</h2>
         <input

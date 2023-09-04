@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Header from './Header';
 
 export default function Login({ onLogin }) {
   const [formValue, setFormValue] = useState({
@@ -22,29 +21,26 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <>
-      <Header title={'Регистрация'} link={'/signup'} />
-      <form className="form" onSubmit={handleSubmit}>
-        <h2 className="form__title">{'Вход'}</h2>
-        <input
-          name="email"
-          type="email"
-          className="form__input"
-          placeholder="Email"
-          value={formValue.email}
-          onChange={handleChange}
-        />
-        <input
-          name="password"
-          type="password"
-          autoComplete="off"
-          className="form__input"
-          placeholder="Пароль"
-          value={formValue.password}
-          onChange={handleChange}
-        />
-        <button className="popup__button popup__button_form">{'Войти'}</button>
-      </form>
-    </>
+    <form className="form" onSubmit={handleSubmit}>
+      <h2 className="form__title">{'Вход'}</h2>
+      <input
+        name="email"
+        type="email"
+        className="form__input"
+        placeholder="Email"
+        value={formValue.email}
+        onChange={handleChange}
+      />
+      <input
+        name="password"
+        type="password"
+        autoComplete="off"
+        className="form__input"
+        placeholder="Пароль"
+        value={formValue.password}
+        onChange={handleChange}
+      />
+      <button className="popup__button popup__button_form">{'Войти'}</button>
+    </form>
   );
 }

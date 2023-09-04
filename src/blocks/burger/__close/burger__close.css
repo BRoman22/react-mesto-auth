@@ -1,6 +1,7 @@
-.popup__close {
-  width: 32px;
-  height: 32px;
+.burger__close {
+  display: none;
+  width: 20px;
+  height: 20px;
   background-image: url(../../../images/close.svg);
   background-size: cover;
   background-position: center;
@@ -8,23 +9,16 @@
   border: none;
   background-color: transparent;
   padding: 0;
-  position: absolute;
-  top: -40px;
-  right: -40px;
   cursor: pointer;
   transition: .5s;
 }
 
-.popup__close:hover {
+.burger__close:hover {
   opacity: .6;
 }
 
-
 @media (max-width: 879px) {
-  .popup__close {
-    top: -36px;
-    right: 0;
-    width: 20px;
-    height: 20px;
+  .burger__close {
+    display: block;
   }
 }

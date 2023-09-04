@@ -1,7 +1,10 @@
 import { useEffect, useContext } from 'react';
-import PopupWithForm from './PopupWithForm';
+import { createPortal } from 'react-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { useForm } from 'react-hook-form';
+import PopupWithForm from './PopupWithForm';
+
+const modalRoot = document.querySelector('#modals');
 
 export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, buttonText }) {
   const currentUser = useContext(CurrentUserContext);
@@ -23,7 +26,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
     onUpdateUser({ name: data.name, about: data.about });
   }
 
-  return (
+  return createPortal(
     <PopupWithForm
       name={'profile'}
       title={'Редактировать профиль'}
@@ -53,6 +56,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
         })}
       />
       <span className="popup__error">{errors.about?.message}</span>
-    </PopupWithForm>
+    </PopupWithForm>,
+    modalRoot
   );
 }

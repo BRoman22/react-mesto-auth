@@ -1,0 +1,19 @@
+.burger {
+  display: none;
+  width: 24px;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: .5s;
+}
+
+.burger:hover {
+  opacity: .6;
+}
+
+@media (max-width: 879px) {
+  .burger {
+    display: block;
+  }
+}

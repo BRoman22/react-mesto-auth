@@ -1,0 +1,9 @@
+.burger__element {
+  background-color: #FFF;
+  height: 3px;
+  margin-bottom: 6px;
+}
+
+.burger__element:last-child {
+  margin: 0;
+}

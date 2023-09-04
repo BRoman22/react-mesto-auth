@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
-import PopupWithForm from './PopupWithForm';
 import { useForm } from 'react-hook-form';
+import { createPortal } from 'react-dom';
+import PopupWithForm from './PopupWithForm';
+
+const modalRoot = document.querySelector('#modals');
 
 export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, buttonText }) {
   const {
@@ -18,7 +21,7 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
     onUpdateAvatar({ avatar: data.avatar });
   }
 
-  return (
+  return createPortal(
     <PopupWithForm
       name={'avatar'}
       title={'Обновить аватар'}
@@ -41,6 +44,7 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
         })}
       />
       <span className="popup__error">{errors.avatar?.message}</span>
-    </PopupWithForm>
+    </PopupWithForm>,
+    modalRoot
   );
 }

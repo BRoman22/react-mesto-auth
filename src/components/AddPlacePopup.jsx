@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
-import PopupWithForm from './PopupWithForm';
 import { useForm } from 'react-hook-form';
+import { createPortal } from 'react-dom';
+import PopupWithForm from './PopupWithForm';
+
+const modalRoot = document.querySelector('#modals');
 
 export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText }) {
   const {
@@ -18,7 +21,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
     onAddPlace({ name: data.name, link: data.link });
   }
 
-  return (
+  return createPortal(
     <PopupWithForm
       name={'card'}
       title={'Новое место'}
@@ -51,6 +54,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
         })}
       />
       <span className="popup__error">{errors.link?.message}</span>
-    </PopupWithForm>
+    </PopupWithForm>,
+    modalRoot
   );
 }

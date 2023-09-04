@@ -19,37 +19,40 @@ import * as api from '../utils/api';
 import * as auth from '../utils/auth';
 
 export default function App() {
-  const [localStorageLoggedIn, setLocalStorageLoggedIn] = useState(
-    localStorage.getItem('isLogged')
-  );
-  const [loggedIn, setLoggedIn] = useState(false);
+  //auth
+  const localLoggedIn = JSON.parse(localStorage.getItem('isLogged'));
+  const [loggedIn, setLoggedIn] = useState(localLoggedIn);
   const [email, setEmail] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [cards, setCards] = useState(null);
+
+  function toggleLoggedIn() {
+    setLoggedIn((prev) => {
+      localStorage.setItem('isLogged', JSON.stringify(!prev));
+      return !prev;
+    });
+  }
+
+  function getContent() {
+    api.getUserInfo().then(setCurrentUser).catch(api.getError);
+    api.getCardList().then(setCards).catch(api.getError);
+  }
 
   useEffect(() => {
-    if (loggedIn) {
-      api.getUserInfo().then(setCurrentUser).catch(api.getError);
-      api.getCardList().then(setCards).catch(api.getError);
+    if (localStorage.getItem('token')) {
+      auth
+        .checkToken()
+        .then((res) => {
+          setEmail(res.data.email);
+          getContent();
+        })
+        .catch(toggleLoggedIn);
     }
-    auth
-      .checkToken()
-      .then((res) => {
-        setEmail(res.data.email);
-        setLoggedIn(true);
-      })
-      .catch(() => {
-        localStorage.setItem('isLogged', false);
-        setLocalStorageLoggedIn(false);
-      });
-  }, [loggedIn]);
+  }, []);
 
-  //auth
   function handleRegister(email, password) {
     auth
       .register({ email, password })
-      .then(() => setPopup({ ...popup, toolTipSuccess: true }))
-      .catch(() => setPopup({ ...popup, toolTipFail: true }));
+      .then(() => setPopup({ ...popup, infoTooltipSuccess: true }))
+      .catch(() => setPopup({ ...popup, infoTooltipFail: true }));
   }
 
   function handleLogin(email, password) {
@@ -57,19 +60,23 @@ export default function App() {
       .login({ email, password })
       .then((res) => {
         localStorage.setItem('token', res.token);
-        localStorage.setItem('isLogged', true);
-        setLoggedIn(true);
-        setLocalStorageLoggedIn(true);
+        setEmail(email);
+        getContent();
+        toggleLoggedIn();
       })
-      .catch(() => setPopup({ ...popup, toolTipFail: true }));
+      .catch(() => setPopup({ ...popup, infoTooltipFail: true }));
   }
 
   function handleSignout() {
-    localStorage.clear();
-    setLoggedIn(false);
+    setEmail('');
+    localStorage.removeItem('token');
+    toggleLoggedIn();
   }
 
   //submits
+  const [currentUser, setCurrentUser] = useState(null);
+  const [cards, setCards] = useState(null);
+
   const [buttonText, setButtonText] = useState({
     user: 'Сохранить',
     card: 'Создать',
@@ -142,8 +149,8 @@ export default function App() {
     avatar: false,
     confirmation: false,
     image: false,
-    toolTipSuccess: false,
-    toolTipFail: false,
+    infoTooltipSuccess: false,
+    infoTooltipFail: false,
   });
   function handleEditProfileClick() {
     setPopup({ ...popup, profile: true });
@@ -172,8 +179,8 @@ export default function App() {
       avatar: false,
       confirmation: false,
       image: false,
-      toolTipSuccess: false,
-      toolTipFail: false,
+      infoTooltipSuccess: false,
+      infoTooltipFail: false,
     });
   }
 
@@ -182,17 +189,12 @@ export default function App() {
       <CurrentCardContext.Provider value={cards}>
         <div className="page">
           <div className="page__content">
+            <Header email={email} signout={handleSignout} />
             <Routes>
               <Route
                 path="/"
                 element={
                   <ProtectedRoute loggedIn={loggedIn}>
-                    <Header
-                      title={'Выйти'}
-                      link={'/signin'}
-                      email={email}
-                      signout={handleSignout}
-                    />
                     <Main
                       onEditProfile={handleEditProfileClick}
                       onAddPlace={handleAddPlaceClick}
@@ -203,74 +205,45 @@ export default function App() {
                       cards={cards}
                     />
                     <Footer />
-                    <EditProfilePopup
-                      isOpen={popup.profile}
-                      onClose={closeAllPopups}
-                      onUpdateUser={handleUpdateUser}
-                      buttonText={buttonText.user}
-                    />
-                    <AddPlacePopup
-                      isOpen={popup.card}
-                      onClose={closeAllPopups}
-                      onAddPlace={handleAddCard}
-                      buttonText={buttonText.card}
-                    />
-                    <EditAvatarPopup
-                      isOpen={popup.avatar}
-                      onClose={closeAllPopups}
-                      onUpdateAvatar={handleUpdateAvatar}
-                      buttonText={buttonText.user}
-                    />
-                    <DeleteCardPopup
-                      isOpen={popup.confirmation}
-                      onClose={closeAllPopups}
-                      onDeleteCard={handleCardDelete}
-                      buttonText={buttonText.confirmation}
-                    />
-                    <ImagePopup isOpen={popup.image} onClose={closeAllPopups} card={cardData} />
                   </ProtectedRoute>
                 }
               />
-              {!localStorageLoggedIn && (
-                <Route
-                  path="/signup"
-                  element={
-                    <>
-                      <Register onRegister={handleRegister} />
-                      <InfoTooltip
-                        name={'success'}
-                        title={'Вы успешно зарегистрировались!'}
-                        isOpen={popup.toolTipSuccess}
-                        onClose={closeAllPopups}
-                      />
-                      <InfoTooltip
-                        name={'fail'}
-                        title={'Что-то пошло не так!Попробуйте ещё раз.'}
-                        isOpen={popup.toolTipFail}
-                        onClose={closeAllPopups}
-                      />
-                    </>
-                  }
-                />
+              {!loggedIn && (
+                <Route path="/signup" element={<Register onRegister={handleRegister} />} />
               )}
-              {!localStorageLoggedIn && (
-                <Route
-                  path="/signin"
-                  element={
-                    <>
-                      <Login onLogin={handleLogin} />
-                      <InfoTooltip
-                        name={'fail'}
-                        title={'Что-то пошло не так!Попробуйте ещё раз.'}
-                        isOpen={popup.toolTipFail}
-                        onClose={closeAllPopups}
-                      />
-                    </>
-                  }
-                />
-              )}
+              {!loggedIn && <Route path="/signin" element={<Login onLogin={handleLogin} />} />}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <EditProfilePopup
+              isOpen={popup.profile}
+              onClose={closeAllPopups}
+              onUpdateUser={handleUpdateUser}
+              buttonText={buttonText.user}
+            />
+            <AddPlacePopup
+              isOpen={popup.card}
+              onClose={closeAllPopups}
+              onAddPlace={handleAddCard}
+              buttonText={buttonText.card}
+            />
+            <EditAvatarPopup
+              isOpen={popup.avatar}
+              onClose={closeAllPopups}
+              onUpdateAvatar={handleUpdateAvatar}
+              buttonText={buttonText.user}
+            />
+            <DeleteCardPopup
+              isOpen={popup.confirmation}
+              onClose={closeAllPopups}
+              onDeleteCard={handleCardDelete}
+              buttonText={buttonText.confirmation}
+            />
+            <ImagePopup isOpen={popup.image} onClose={closeAllPopups} card={cardData} />
+            <InfoTooltip
+              success={popup.infoTooltipSuccess}
+              fail={popup.infoTooltipFail}
+              onClose={closeAllPopups}
+            />
           </div>
         </div>
       </CurrentCardContext.Provider>
