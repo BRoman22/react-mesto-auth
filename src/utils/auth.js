@@ -1,5 +1,6 @@
 const BASE_URL = 'https://auth.nomoreparties.co';
 const checkResponse = (res) => (res.ok ? res.json() : Promise.reject());
+const localToken = localStorage.getItem('token');
 
 export const register = (data) =>
   fetch(`${BASE_URL}/signup`, {
@@ -24,6 +25,6 @@ export const checkToken = () =>
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localToken}`,
     },
   }).then(checkResponse);
