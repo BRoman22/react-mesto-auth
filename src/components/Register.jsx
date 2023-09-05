@@ -44,7 +44,7 @@ export default function Register({ onRegister }) {
         />
         <button className="popup__button popup__button_form">{'Зарегистрироваться'}</button>
       </form>
-      <Link className="link" to="/signin">
+      <Link className="form__link" to="/signin">
         Уже зарегистрированы? Войти
       </Link>
     </>

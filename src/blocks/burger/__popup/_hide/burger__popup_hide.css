@@ -1,0 +1,4 @@
+.burger__popup_hide {
+  visibility: hidden;
+  height: 0;
+}

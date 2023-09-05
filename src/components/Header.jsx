@@ -17,18 +17,18 @@ export default function Header({ email, signout }) {
 
   return (
     <>
-      {!burgerMenu && (
-        <div className="burger__popup">
-          <h2 className="header__email header__email_popup">{email}</h2>
-          <Link
-            to="/signin"
-            className="header__link header__link_auth"
-            onClick={signoutAndClosePopup}
-          >
-            Выйти
-          </Link>
-        </div>
-      )}
+      <div className={`burger__popup ${burgerMenu && 'burger__popup_hide'}`}>
+        <h2 className={`header__email header__email_popup ${burgerMenu && 'header__email_hide'}`}>
+          {email}
+        </h2>
+        <Link
+          to="/signin"
+          className={`header__link header__link_auth ${burgerMenu && 'header__link_hide'}`}
+          onClick={signoutAndClosePopup}
+        >
+          Выйти
+        </Link>
+      </div>
       <header className="header">
         <div className="header__logo" />
         <div className="header__container">

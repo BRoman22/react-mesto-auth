@@ -1,0 +1,4 @@
+.header__link_hide {
+  transition: .2s;
+  opacity: 0;
+}

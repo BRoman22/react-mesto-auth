@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   height: 141px;
+  transition: .6s;
+  visibility: visible;
 }
 
 @media (min-width: 879px) {

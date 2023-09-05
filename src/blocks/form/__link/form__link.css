@@ -1,4 +1,4 @@
-.link {
+.form__link {
   margin: 15px auto 0;
   font-size: 14px;
   font-weight: 400;
@@ -8,6 +8,6 @@
   transition: 0.5s;
 }
 
-.link:hover {
+.form__link:hover {
   opacity: 0.6;
 }
