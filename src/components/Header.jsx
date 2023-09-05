@@ -4,10 +4,10 @@ import Burger from './Burger';
 
 export default function Header({ email, signout }) {
   const { pathname } = useLocation();
-  const [popup, setPopup] = useState(true);
+  const [burgerMenu, setBurgerMenu] = useState(true);
 
   function handleClick() {
-    setPopup(() => !popup);
+    setBurgerMenu(() => !burgerMenu);
   }
 
   function signoutAndClosePopup() {
@@ -17,7 +17,7 @@ export default function Header({ email, signout }) {
 
   return (
     <>
-      {!popup && (
+      {!burgerMenu && (
         <div className="burger__popup">
           <h2 className="header__email header__email_popup">{email}</h2>
           <Link
@@ -34,7 +34,7 @@ export default function Header({ email, signout }) {
         <div className="header__container">
           {pathname === '/' && (
             <>
-              <Burger isOpen={popup} handleClick={handleClick} />
+              <Burger isOpen={burgerMenu} handleClick={handleClick} />
               <h2 className="header__email header__email_unvisible">{email}</h2>
               <Link to="/signin" className="header__link header__link_unvisible" onClick={signout}>
                 Выйти
