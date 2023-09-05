@@ -25,10 +25,8 @@ export default function App() {
   const [email, setEmail] = useState(null);
 
   function toggleLoggedIn() {
-    setLoggedIn((prev) => {
-      localStorage.setItem('isLogged', JSON.stringify(!prev));
-      return !prev;
-    });
+    setLoggedIn(!loggedIn);
+    localStorage.setItem('isLogged', JSON.stringify(!localLoggedIn));
   }
 
   function getContent() {
