@@ -14,8 +14,6 @@ import ImagePopup from './ImagePopup';
 import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import Register from './Register';
-import InfoTooltipSuccess from './InfoTooltipSuccess';
-import InfoTooltipFail from './InfoTooltipFail';
 import InfoTooltip from './InfoTooltip';
 import * as api from '../utils/api';
 import * as auth from '../utils/auth';
