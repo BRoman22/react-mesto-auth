@@ -17,8 +17,8 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace, buttonText 
     reset();
   }, [isOpen]);
 
-  function onSubmit(data) {
-    onAddPlace({ name: data.name, link: data.link });
+  function onSubmit({ name, link }) {
+    onAddPlace({ name, link });
   }
 
   return createPortal(

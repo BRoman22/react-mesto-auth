@@ -17,8 +17,8 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, butto
     reset();
   }, [isOpen]);
 
-  function onSubmit(data) {
-    onUpdateAvatar({ avatar: data.avatar });
+  function onSubmit({ avatar }) {
+    onUpdateAvatar({ avatar });
   }
 
   return createPortal(

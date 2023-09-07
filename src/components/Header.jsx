@@ -9,7 +9,7 @@ export default function Header({ email, signout }) {
     setBurgerMenu(() => !burgerMenu);
   }
 
-  function signoutAndClosePopup() {
+  function signoutAndCloseBurgerMenu() {
     signout();
     handleClick();
   }
@@ -23,7 +23,7 @@ export default function Header({ email, signout }) {
         <Link
           to="/signin"
           className={`header__link header__link_auth ${burgerMenu && 'header__link_hide'}`}
-          onClick={signoutAndClosePopup}
+          onClick={signoutAndCloseBurgerMenu}
         >
           Выйти
         </Link>

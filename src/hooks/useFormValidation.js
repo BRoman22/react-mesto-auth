@@ -13,7 +13,7 @@ export default function useFormValidation() {
     setIsValid(e.target.closest('form').checkValidity());
   }
 
-  function resetAllForm() {
+  function resetForm() {
     setInputs(newValues);
     setErrors(newValues);
   }
@@ -22,5 +22,5 @@ export default function useFormValidation() {
     setIsValid(false);
   }
 
-  return { inputs, setInputs, errors, isValid, handleChange, resetAllForm, resetSubmitButton };
+  return { inputs, setInputs, errors, isValid, handleChange, resetForm, resetSubmitButton };
 }

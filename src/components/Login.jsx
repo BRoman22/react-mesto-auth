@@ -1,45 +1,41 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function Login({ onLogin }) {
-  const [formValue, setFormValue] = useState({
-    email: '',
-    password: '',
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ mode: 'onChange', defaultValues: { email: '', password: '' } });
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormValue({ ...formValue, [name]: value });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const { email, password } = formValue;
-    if (!email || !password) {
-      return;
-    }
+  function onSubmit({ email, password }) {
     onLogin(email, password);
   }
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
       <h2 className="form__title">{'Вход'}</h2>
       <input
-        name="email"
-        type="email"
         className="form__input"
         placeholder="Email"
-        value={formValue.email}
-        onChange={handleChange}
+        {...register('email', {
+          required: 'Заполните это поле.',
+          pattern: {
+            value: /^\S+@\S+\.\S+$/,
+            message: 'Введите Email.',
+          },
+        })}
       />
+      <span className="popup__error">{errors.email?.message}</span>
       <input
-        name="password"
         type="password"
-        autoComplete="off"
         className="form__input"
         placeholder="Пароль"
-        value={formValue.password}
-        onChange={handleChange}
+        {...register('password', {
+          required: 'Заполните это поле.',
+          minLength: { value: 4, message: 'Пароль должен быть не короче 4 симв.' },
+        })}
       />
+      <span className="popup__error">{errors.password?.message}</span>
       <button className="popup__button popup__button_form">{'Войти'}</button>
     </form>
   );

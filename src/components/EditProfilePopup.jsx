@@ -22,8 +22,8 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, button
     setValue('about', currentUser?.about);
   }, [isOpen, currentUser]);
 
-  function onSubmit(data) {
-    onUpdateUser({ name: data.name, about: data.about });
+  function onSubmit({ name, about }) {
+    onUpdateUser({ name, about });
   }
 
   return createPortal(
